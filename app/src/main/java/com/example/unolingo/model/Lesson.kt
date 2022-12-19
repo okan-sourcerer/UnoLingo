@@ -1,3 +1,5 @@
 package com.example.unolingo.model
 
-data class Lesson(val courseName: String, val lessonList: ArrayList<String>)
+data class Lesson(var name: String, var lessons: MutableList<String>){
+    constructor() : this("", ArrayList<String>())
+}

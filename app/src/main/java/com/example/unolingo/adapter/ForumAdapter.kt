@@ -12,7 +12,7 @@ import com.example.unolingo.utils.Utils
 
 class ForumAdapter() : RecyclerView.Adapter<ForumAdapter.ViewHolder>() {
     private val TAG = "ForumAdapter"
-    private val list = Utils.list
+    private val list = Utils.forumSummaryList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.forum_item, parent, false)
         Log.d(TAG, "onCreateViewHolder: creating viewholder")

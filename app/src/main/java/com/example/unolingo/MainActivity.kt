@@ -3,8 +3,6 @@ package com.example.unolingo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.FragmentManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.unolingo.adapter.PagerTabAdapter
 import com.example.unolingo.model.ForumSummaryEntity
@@ -22,25 +20,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.list.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
 
-        val list = ArrayList<String>()
-        list.add("Reading")
-        list.add("Pronunciation")
-        list.add("Course Ending Test")
-        Utils.lessonList.add(Lesson("Ünite 1", list))
-        Utils.lessonList.add(Lesson("Ünite 2", list))
-        Utils.lessonList.add(Lesson("Ünite 3", list))
-        Utils.lessonList.add(Lesson("Ünite 4", list))
-        Utils.lessonList.add(Lesson("Ünite 5", list))
-
-        Log.d(TAG, "onCreate: added elements to forum size: " + Utils.list.size)
+        Log.d(TAG, "onCreate: added elements to forum size: " + Utils.forumSummaryList.size)
         viewPager = findViewById(R.id.main_pager)
         tabLayout = findViewById(R.id.main_tab_layout)
 

@@ -1,27 +1,30 @@
 package com.example.unolingo.adapter
 
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.model.Lesson
+import com.example.unolingo.utils.LessonConnectionHandler
 import com.example.unolingo.utils.Utils
 
 class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
-    val list = Utils.lessonList
+    var list = LessonConnectionHandler.lessonList
     private val TAG = "LessonAdapter"
+
+    init{
+        LessonConnectionHandler.retrieveLessons(this)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.lesson_item, parent, false)
         Log.d(TAG, "onCreateViewHolder: creating viewholder")
-        return LessonAdapter.ViewHolder(view)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -34,20 +37,22 @@ class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         lateinit var text: TextView
         lateinit var expandIcon: ImageView
-        lateinit var collapsableLayout: ConstraintLayout
+        lateinit var collapsableRecyclerView: RecyclerView
         private var isExpanded = false
         fun bind(lesson: Lesson){
             text = itemView.findViewById(R.id.lesson_item_name)
             expandIcon = itemView.findViewById(R.id.lesson_item_expand)
-            collapsableLayout = itemView.findViewById(R.id.lesson_item_inner_layout)
+            collapsableRecyclerView = itemView.findViewById(R.id.lesson_item_inner_layout)
 
-            text.text = lesson.courseName
+            text.text = lesson.name
 
+            collapsableRecyclerView.adapter = InnerLessonAdapter(lesson)
+            collapsableRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
             expandIcon.setOnClickListener {
-                if (collapsableLayout.visibility == View.VISIBLE){
-                    collapsableLayout.visibility = View.GONE
+                if (collapsableRecyclerView.visibility == View.VISIBLE){
+                    collapsableRecyclerView.visibility = View.GONE
                 } else{
-                    collapsableLayout.visibility = View.VISIBLE
+                    collapsableRecyclerView.visibility = View.VISIBLE
                 }
             }
         }
