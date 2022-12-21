@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.model.Lesson
+import com.example.unolingo.utils.Animations
 import com.example.unolingo.utils.LessonConnectionHandler
-import com.example.unolingo.utils.Utils
 
 class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
     var list = LessonConnectionHandler.lessonList
-    private val TAG = "LessonAdapter"
 
     init{
         LessonConnectionHandler.retrieveLessons(this)
@@ -38,33 +38,42 @@ class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
         lateinit var text: TextView
         lateinit var expandIcon: ImageView
         lateinit var collapsableRecyclerView: RecyclerView
+        lateinit var cardView: CardView
         private var isExpanded = false
         fun bind(lesson: Lesson){
             text = itemView.findViewById(R.id.lesson_item_name)
             expandIcon = itemView.findViewById(R.id.lesson_item_expand)
             collapsableRecyclerView = itemView.findViewById(R.id.lesson_item_inner_layout)
+            cardView = itemView.findViewById(R.id.lesson_layout)
 
             text.text = lesson.name
 
             collapsableRecyclerView.adapter = InnerLessonAdapter(lesson)
             collapsableRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
-            expandIcon.setOnClickListener {
-                if (collapsableRecyclerView.visibility == View.VISIBLE){
-                    collapsableRecyclerView.visibility = View.GONE
+            cardView.setOnClickListener {
+                if (isExpanded){
+                    performCollapse()
                 } else{
-                    collapsableRecyclerView.visibility = View.VISIBLE
+                    performExpand()
                 }
+
+                Log.d(TAG, "bind: isExpanded : $isExpanded")
+                isExpanded = !isExpanded
             }
+        }
+
+        private fun performExpand(){
+            Animations.expand(collapsableRecyclerView)
+            expandIcon.animate().rotation(180f)
+        }
+
+        private fun performCollapse(){
+            Animations.collapse(collapsableRecyclerView)
+            expandIcon.animate().rotation(0f)
         }
     }
 
-    private class LessonWrapper(lessonName: String) {
-        var lessonName: String
-        var isExpanded: Boolean
-
-        init {
-            this.lessonName = lessonName
-            isExpanded = false
-        }
+    companion object {
+        private const val TAG = "LessonAdapter"
     }
 }
