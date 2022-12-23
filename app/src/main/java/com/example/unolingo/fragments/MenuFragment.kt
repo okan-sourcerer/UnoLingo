@@ -1,14 +1,19 @@
 package com.example.unolingo.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.adapter.LessonAdapter
+import com.example.unolingo.utils.Utils
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * A simple [Fragment] subclass.
@@ -18,6 +23,7 @@ import com.example.unolingo.adapter.LessonAdapter
 class MenuFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var nameTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +41,19 @@ class MenuFragment : Fragment() {
         recyclerView = view.findViewById(R.id.menu_recycler)
         recyclerView.adapter = LessonAdapter()
         recyclerView.layoutManager = LinearLayoutManager(view.context)
+
+        nameTextView = view.findViewById(R.id.menu_linear_text_name)
+
+        FirebaseAuth.getInstance().uid?.let { it ->
+            FirebaseFirestore.getInstance().collection("users").document(
+                it
+            ).get().addOnSuccessListener {
+                Log.d(TAG, "onCreate: userName is received from server: ${it.get("name")}")
+                nameTextView.text = it.get("name") as CharSequence?
+                Utils.userName = nameTextView.text.toString()
+            }
+        }
+
         return view
     }
 
@@ -46,5 +65,7 @@ class MenuFragment : Fragment() {
                 arguments = Bundle().apply {
                 }
             }
+
+        private const val TAG = "MenuFragment"
     }
 }

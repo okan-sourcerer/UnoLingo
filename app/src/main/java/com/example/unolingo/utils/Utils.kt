@@ -14,6 +14,8 @@ object Utils {
 
     val lessonList = ArrayList<Lesson>()
 
+    var userName: String = ""
+
     init{
 
         val db = FirebaseFirestore.getInstance()

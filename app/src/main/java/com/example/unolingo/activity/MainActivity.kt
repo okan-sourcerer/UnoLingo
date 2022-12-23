@@ -1,12 +1,12 @@
-package com.example.unolingo
+package com.example.unolingo.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.viewpager2.widget.ViewPager2
+import com.example.unolingo.R
 import com.example.unolingo.adapter.PagerTabAdapter
 import com.example.unolingo.model.ForumSummaryEntity
-import com.example.unolingo.model.Lesson
 import com.example.unolingo.utils.Utils
 import com.google.android.material.tabs.TabLayout
 
