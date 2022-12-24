@@ -13,95 +13,51 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="10dp">
-
-        <LinearLayout
-            android:id="@+id/question_play_sound"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/question_sound_icon_type3"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_play_sound"
-                android:contentDescription="Play sound icon"
-                />
-
-        </LinearLayout>
-        <ImageView
-            android:id="@+id/question_image"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/question_play_sound"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_margin="10dp"
-            android:contentDescription="Question image"
-            android:visibility="gone"/>
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@id/question_next_layout">
 
         <TextView
             android:id="@+id/question_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/question_image"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="temp Text"
             android:textSize="20sp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginTop="24dp"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="20dp"
             />
-        <TextView
-            android:id="@+id/question_question2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/question_question"
-            android:textSize="20sp"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
-            android:visibility="gone"
-            />
-
         <LinearLayout
             android:id="@+id/question_questions_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/question_question2"
+            app:layout_constraintTop_toBottomOf="@id/question_question"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="30dp">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageButton
                     android:id="@+id/question_option1"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_margin="7dp"
                     android:layout_gravity="fill_horizontal"
-                    android:layout_weight="1"
-                    android:textAllCaps="false"
-                    android:maxLines="2"
-                    />
-                <Button
+                    android:layout_weight="1"/>
+                <ImageButton
                     android:id="@+id/question_option2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_margin="7dp"
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="1"
-                    android:textAllCaps="false"
-                    android:maxLines="2"/>
+                    android:maxHeight="70dp"/>
 
             </LinearLayout>
 
@@ -110,24 +66,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <ImageButton
                     android:id="@+id/question_option3"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_margin="7dp"
                     android:layout_weight="1"
                     android:layout_gravity="fill_horizontal"
-                    android:textAllCaps="false"
-                    android:maxLines="2"/>
-                <Button
+                    android:maxHeight="70dp"/>
+                <ImageButton
                     android:id="@+id/question_option4"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="100dp"
                     android:layout_margin="7dp"
                     android:layout_gravity="fill_horizontal"
                     android:layout_weight="1"
-                    android:textAllCaps="false"
-                    android:maxLines="2"/>
+                    android:maxHeight="70dp"/>
             </LinearLayout>
 
         </LinearLayout>

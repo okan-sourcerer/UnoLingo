@@ -13,7 +13,9 @@ import com.example.unolingo.R
 import com.example.unolingo.adapter.LessonAdapter
 import com.example.unolingo.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 /**
  * A simple [Fragment] subclass.

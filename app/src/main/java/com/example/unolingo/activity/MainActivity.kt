@@ -1,5 +1,6 @@
 package com.example.unolingo.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,8 @@ import com.example.unolingo.adapter.PagerTabAdapter
 import com.example.unolingo.model.ForumSummaryEntity
 import com.example.unolingo.utils.Utils
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -18,6 +21,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val firebaseUser = Firebase.auth.currentUser
+        if (firebaseUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
         setContentView(R.layout.activity_main)
 
         Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))

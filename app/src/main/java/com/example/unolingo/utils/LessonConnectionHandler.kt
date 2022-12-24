@@ -14,19 +14,21 @@ object LessonConnectionHandler {
 
     fun retrieveLessons(adapter: LessonAdapter){
         val db = FirebaseFirestore.getInstance()
-        db.collection("themesAndCourses").get().addOnCompleteListener{ result ->
-            Log.d(TAG, "firestore getting lessons: got " + result.result.size() + " items")
-            lessonList.removeAll { true }
-            for (document in result.result.iterator()){
-                val lesson = document.toObject<Lesson>()
-                lessonList.add(lesson)
+        db.collection("themesAndCourses").addSnapshotListener { value, error ->
+            if (error != null){
+                Log.d(TAG, "retrieveLessons: error retrieving lessons $error")
+                return@addSnapshotListener
             }
-            adapter.list = lessonList
-            adapter.notifyDataSetChanged()
+            if (value != null) {
+                Log.d(TAG, "firestore getting lessons: got " + value.size() + " items")
+                lessonList.removeAll { true }
+                for (document in value.iterator()){
+                    val lesson = document.toObject<Lesson>()
+                    lessonList.add(lesson)
+                }
+                adapter.list = lessonList
+                adapter.notifyDataSetChanged()
+            }
         }
-    }
-    init{
-
-
     }
 }

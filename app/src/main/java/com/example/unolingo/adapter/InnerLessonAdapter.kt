@@ -1,11 +1,13 @@
 package com.example.unolingo.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
+import com.example.unolingo.activity.QuestionsActivity
 import com.example.unolingo.model.Lesson
 
 class InnerLessonAdapter(val lesson: Lesson) : RecyclerView.Adapter<InnerLessonAdapter.ViewHolder>() {
@@ -28,6 +30,12 @@ class InnerLessonAdapter(val lesson: Lesson) : RecyclerView.Adapter<InnerLessonA
         fun bind(courseName: String){
             textView = itemView.findViewById(R.id.inner_lesson_item_name)
             textView.text = courseName
+
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, QuestionsActivity::class.java)
+                intent.putExtra("LESSON", textView.text.toString())
+                it.context.startActivity(intent)
+            }
         }
 
     }
