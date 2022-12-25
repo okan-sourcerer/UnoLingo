@@ -2,10 +2,8 @@ package com.example.unolingo.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,9 +66,6 @@ class MenuFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
     }
 
-    fun refreshAdapter(adapter: LessonAdapter){
-        adapter.notifyDataSetChanged()
-    }
 
     companion object {
 
@@ -82,8 +77,5 @@ class MenuFragment : Fragment() {
             }
 
         private const val TAG = "MenuFragment"
-        const val SCORE_RETURN = "SCORE"
-        const val LESSON_ID = "LESSON_ID"
-        const val IS_COMPLETED = "IS_COMPLETED"
     }
 }

@@ -23,7 +23,7 @@
             android:id="@+id/main_tab_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Menu"/>
+            android:text="Learn"/>
         <com.google.android.material.tabs.TabItem
             android:id="@+id/main_tab_forum"
             android:layout_width="wrap_content"

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.model.ForumSummaryEntity
@@ -42,6 +43,10 @@ class ForumAdapter() : RecyclerView.Adapter<ForumAdapter.ViewHolder>() {
             name.text = info.name
             title.text = info.title
             date.text = info.date
+
+            itemView.setOnClickListener {
+                Toast.makeText(itemView.context, "This feature is not yet implemented", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

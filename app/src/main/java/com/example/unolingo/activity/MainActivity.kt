@@ -36,13 +36,13 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
-        Utils.forumSummaryList.add(ForumSummaryEntity("asd", "Güzel Başlık", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Anıl", "Soru 2 hakkında", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Okan", "Dil öğrenme aktiviteleri tavsiye", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Çağatay", "İngilizceden sonraki dil?", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Okan", "Konu dışı", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Okan", "Kitap öneri", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Anıl", "Foods and Drinks Soru 5 yardım", "Dün"))
+        Utils.forumSummaryList.add(ForumSummaryEntity("Çağatay", "İngilizce film önerisi", "Dün"))
 
         Log.d(TAG, "onCreate: added elements to forum size: " + Utils.forumSummaryList.size)
         viewPager = findViewById(R.id.main_pager)

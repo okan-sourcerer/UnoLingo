@@ -9,6 +9,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -62,7 +64,9 @@ class QuestionsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_question_loading)
         spinner = findViewById(R.id.question_loading)
 
+
         lessonID = intent.getStringExtra("LESSON").toString()
+        supportActionBar?.title = lessonID
         FirebaseFirestore.getInstance().collection("lessons").whereEqualTo("lessonID", lessonID)
             .get().addOnSuccessListener {
 
@@ -86,6 +90,20 @@ class QuestionsActivity : AppCompatActivity() {
             }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_question, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.menu_call_instructor -> {
+                Toast.makeText(this, "This feature is not yet implemented.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return true
+    }
+
     private fun handleUI(questionIndex: Int){
         if (questionIndex == questionList.size){
             val wrongAnswerDeduction: Int = 100 / questionList.size
@@ -95,12 +113,14 @@ class QuestionsActivity : AppCompatActivity() {
             val progress = LessonConnectionHandler.progressList[progressIndex]
             progress.score = score
             Log.d(TAG, "activity return: lesson $lessonID, score $score, success $success")
-            val lessonIndex = LessonConnectionHandler.lessonList[0].lessons.indexOfFirst { it == lessonID }
-            progressIndex = LessonConnectionHandler.progressList.indexOfFirst { it.lessonID == LessonConnectionHandler.lessonList[0].lessons[lessonIndex] }
+            val lessonIndex = LessonConnectionHandler.lessonList.first { it.name == "Foods and Drinks" }.lessons.indexOfFirst { it == lessonID }
+            Log.d(TAG, "handleUI: dersler falan ${LessonConnectionHandler.lessonList[0].name} $lessonIndex, ${LessonConnectionHandler.lessonList[0].lessons[lessonIndex + 1]}")
+            progressIndex = LessonConnectionHandler.progressList.indexOfFirst { it.lessonID == LessonConnectionHandler.lessonList[0].lessons[lessonIndex + 1] }
             LessonConnectionHandler.updateScoreAndLessonStatus(progress, success)
             if (progressIndex < LessonConnectionHandler.progressList.size && success){
                 LessonConnectionHandler.updateAccessibleStatus(LessonConnectionHandler.progressList[progressIndex])
             }
+            Log.d(TAG, "handleUI: progressIndex $progressIndex")
             Log.d(TAG, "handleUI: lessonID $lessonID, score $score, iscompleted ${score > 60}")
             val intent = Intent()
             setResult(Activity.RESULT_OK, intent)
