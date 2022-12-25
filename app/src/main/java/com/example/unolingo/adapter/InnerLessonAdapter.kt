@@ -1,7 +1,7 @@
 package com.example.unolingo.adapter
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
+import com.example.unolingo.activity.MainActivity
 import com.example.unolingo.activity.QuestionsActivity
 import com.example.unolingo.model.Lesson
 import com.example.unolingo.model.LessonProgress
@@ -28,7 +29,7 @@ class InnerLessonAdapter(val lesson: Lesson, val progress: ArrayList<LessonProgr
 
     override fun getItemCount() = lesson.lessons.size
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
         private lateinit var textView: TextView
         private lateinit var accessImage: ImageView
@@ -36,32 +37,43 @@ class InnerLessonAdapter(val lesson: Lesson, val progress: ArrayList<LessonProgr
         private lateinit var progressText: TextView
 
         fun bind(courseName: String, progress: LessonProgress){
+            Log.d("InnerLessonAdapter", "bind: $progress")
             textView = itemView.findViewById(R.id.inner_lesson_item_name)
             textView.text = courseName
+
+            accessImage = itemView.findViewById(R.id.inner_lesson_locked_image)
 
             progressBar = itemView.findViewById(R.id.inner_lesson_progress_bar)
             progressText = itemView.findViewById(R.id.inner_lesson_progress_text)
             progressText.text = progress.score.toString()
             progressBar.progress = progress.score
 
-            itemView.setOnClickListener {
-                val intent = Intent(itemView.context, QuestionsActivity::class.java)
-                intent.putExtra("LESSON", textView.text.toString())
-                it.context.startActivity(intent)
-            }
-            accessImage = itemView.findViewById(R.id.inner_lesson_locked_image)
-            if(progress.isCompleted){
-                // TODO(change background to green)
+            Log.d("InnerLessonAdapter", "bind: ${progress.accessible}, ${progress.completed}")
+            if(progress.completed){
+                Log.d("InnerLessonAdapter", "bind: should be completed")
                 accessImage.visibility = View.GONE
             }
-            else if (progress.isAccessible){
+            else if (progress.accessible){
+                Log.d("InnerLessonAdapter", "bind: should be accessible")
                 accessImage.visibility = View.VISIBLE
                 accessImage.setImageResource(R.drawable.ic_unlocked)
             }
             else{
+                Log.d("InnerLessonAdapter", "bind: should be locked")
                 accessImage.visibility = View.VISIBLE
                 accessImage.setImageResource(R.drawable.ic_locked)
+                itemView.isEnabled = false
             }
+
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, QuestionsActivity::class.java)
+                intent.putExtra("LESSON", textView.text.toString())
+                (itemView.context as MainActivity).questionScoreResult.launch(intent)
+                Log.d("InnerLessonAdapter", "bind: updating viewholder pos $adapterPosition")
+                notifyItemChanged(adapterPosition)
+            }
+            accessImage = itemView.findViewById(R.id.inner_lesson_locked_image)
+
         }
     }
 }

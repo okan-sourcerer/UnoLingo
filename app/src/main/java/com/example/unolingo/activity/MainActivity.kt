@@ -1,13 +1,17 @@
 package com.example.unolingo.activity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.viewpager2.widget.ViewPager2
 import com.example.unolingo.R
 import com.example.unolingo.adapter.PagerTabAdapter
+import com.example.unolingo.fragments.MenuFragment
 import com.example.unolingo.model.ForumSummaryEntity
+import com.example.unolingo.utils.LessonConnectionHandler
 import com.example.unolingo.utils.Utils
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.ktx.auth
@@ -18,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
+    private lateinit var pagerAdapter: PagerTabAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +48,8 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.main_pager)
         tabLayout = findViewById(R.id.main_tab_layout)
 
-        viewPager.adapter = PagerTabAdapter(supportFragmentManager, lifecycle)
+        pagerAdapter = PagerTabAdapter(supportFragmentManager, lifecycle)
+        viewPager.adapter = pagerAdapter
 
         // handle tab select actions
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
@@ -61,5 +67,8 @@ class MainActivity : AppCompatActivity() {
                 tabLayout.selectTab(tabLayout.getTabAt(position))
             }
         })
+    }
+
+    val questionScoreResult =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
     }
 }

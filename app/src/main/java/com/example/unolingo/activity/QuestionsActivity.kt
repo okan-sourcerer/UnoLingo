@@ -1,5 +1,7 @@
 package com.example.unolingo.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -13,8 +15,10 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.adapter.QuestionSortAdapter
+import com.example.unolingo.fragments.MenuFragment
 import com.example.unolingo.model.Question
 import com.example.unolingo.utils.AutoFitGridLayoutManager
+import com.example.unolingo.utils.LessonConnectionHandler
 import com.example.unolingo.utils.Utils
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.File
@@ -47,41 +51,59 @@ class QuestionsActivity : AppCompatActivity() {
     private var wrongAnswers = 0
     private var answerReached = false
 
+    private var score = 0
+
     private lateinit var mediaPlayer: MediaPlayer
+
+    private var lessonID = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_loading)
         spinner = findViewById(R.id.question_loading)
 
-        val lessonName = intent.getStringExtra("LESSON")
-        if (lessonName != null){
-            FirebaseFirestore.getInstance().collection("lessons").whereEqualTo("lessonID", lessonName)
-                .get().addOnSuccessListener {
+        lessonID = intent.getStringExtra("LESSON").toString()
+        FirebaseFirestore.getInstance().collection("lessons").whereEqualTo("lessonID", lessonID)
+            .get().addOnSuccessListener {
 
-                    for (item in it.documents.iterator()){
-                        val question = item.toObject(Question::class.java)
-                        Log.d(TAG, "onCreate: adding questions ${question?.questionNum}" )
-                        if (question != null) {
-                            Log.d(TAG, "onCreate: questionAdded $question")
-                            questionList.add(question)
-                        }
+                for (item in it.documents.iterator()){
+                    val question = item.toObject(Question::class.java)
+                    Log.d(TAG, "onCreate: adding questions ${question?.questionNum}" )
+                    if (question != null) {
+                        Log.d(TAG, "onCreate: questionAdded $question")
+                        questionList.add(question)
                     }
-                    questionList.sortBy { question: Question -> question.questionNum }
+                }
+                questionList.sortBy { question: Question -> question.questionNum }
 
-                    Utils.storeImages(questionList, this)
-                    Log.d(TAG, "onCreate: retrieved questions. size: ${questionList.size}")
-                    handleUI(0)
-                }
-                .addOnFailureListener {
-                    Log.d(TAG, "onCreate: failed to retrieve questions")
-                    Toast.makeText(this, "Failed to retrieve questions from server.", Toast.LENGTH_SHORT).show()
-                }
-        }
+                Utils.storeImages(questionList, this)
+                Log.d(TAG, "onCreate: retrieved questions. size: ${questionList.size}")
+                handleUI(0)
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "onCreate: failed to retrieve questions")
+                Toast.makeText(this, "Failed to retrieve questions from server.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun handleUI(questionIndex: Int){
         if (questionIndex == questionList.size){
+            val wrongAnswerDeduction: Int = 100 / questionList.size
+            score = 100 - wrongAnswerDeduction * wrongAnswers
+            val success = score > 60
+            var progressIndex = LessonConnectionHandler.progressList.indexOfFirst { it.lessonID == lessonID }
+            val progress = LessonConnectionHandler.progressList[progressIndex]
+            progress.score = score
+            Log.d(TAG, "activity return: lesson $lessonID, score $score, success $success")
+            val lessonIndex = LessonConnectionHandler.lessonList[0].lessons.indexOfFirst { it == lessonID }
+            progressIndex = LessonConnectionHandler.progressList.indexOfFirst { it.lessonID == LessonConnectionHandler.lessonList[0].lessons[lessonIndex] }
+            LessonConnectionHandler.updateScoreAndLessonStatus(progress, success)
+            if (progressIndex < LessonConnectionHandler.progressList.size && success){
+                LessonConnectionHandler.updateAccessibleStatus(LessonConnectionHandler.progressList[progressIndex])
+            }
+            Log.d(TAG, "handleUI: lessonID $lessonID, score $score, iscompleted ${score > 60}")
+            val intent = Intent()
+            setResult(Activity.RESULT_OK, intent)
             finish()
             return
         }
@@ -317,9 +339,8 @@ class QuestionsActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             else{
-                wrongAnswers++
+                wrongAnswer(it)
             }
-            it.isEnabled = false
         }
 
         nextQuestionButton.setOnClickListener {
