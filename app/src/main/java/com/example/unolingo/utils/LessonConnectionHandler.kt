@@ -72,7 +72,8 @@ object LessonConnectionHandler {
                         lessons.add(lesson)
                         for (course in lesson.lessons) {
                             var isAccessible = false
-                            if (index.index == 0){
+
+                            if (course == "Meet Foods"){
                                 isAccessible = true
                             }
                             val progress =
@@ -82,9 +83,9 @@ object LessonConnectionHandler {
                                 val map = hashMapOf(
                                     "uid" to progress.uid,
                                     "lessonID" to progress.lessonID,
-                                    "isCompleted" to progress.isCompleted,
+                                    "completed" to progress.completed,
                                     "score" to progress.score,
-                                    "isAccessible" to progress.isAccessible
+                                    "accessible" to progress.accessible
                                 )
                                 db.collection("userProgress").add(map).addOnSuccessListener {
                                     Log.d(TAG, "insertInitialLessonProgress: progress is created and added $progress")
@@ -95,5 +96,39 @@ object LessonConnectionHandler {
                 }
             }
         }
+    }
+
+    fun updateScoreAndLessonStatus(progress: LessonProgress, isSuccess: Boolean){
+        val db = FirebaseFirestore.getInstance()
+
+        val map = hashMapOf("uid" to progress.uid,
+            "lessonID" to progress.lessonID,
+            "completed" to progress.completed,
+            "score" to progress.score,
+            "accessible" to progress.accessible)
+
+        db.collection("userProgress").whereEqualTo("uid", map["uid"])
+            .whereEqualTo("lessonID", map["lessonID"]).get().addOnSuccessListener {
+                map["completed"] = isSuccess
+                db.collection("userProgress").document(it.documents[0].id).update(map as Map<String, Any>)
+            }
+    }
+
+    fun updateAccessibleStatus(progress: LessonProgress){
+        val db = FirebaseFirestore.getInstance()
+        Log.d(TAG, "updateAccessibleStatus: updating accessibility of $progress")
+        val map = hashMapOf("uid" to progress.uid,
+            "lessonID" to progress.lessonID,
+            "completed" to progress.completed,
+            "score" to progress.score,
+            "accessible" to true)
+        db.collection("userProgress").whereEqualTo("lessonID", map["lessonID"])
+            .whereEqualTo("uid", map["uid"])
+            .get().addOnSuccessListener {
+                db.collection("userProgress").document(it.documents[0].id).update(map as Map<String, Any>)
+                    .addOnSuccessListener {it2 ->
+                        Log.d(TAG, "updateAccessibleStatus: updated accessibility ${it.documents[0]}")
+                    }
+            }
     }
 }

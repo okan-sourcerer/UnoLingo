@@ -1,6 +1,5 @@
 package com.example.unolingo.fragments
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
@@ -17,9 +14,7 @@ import com.example.unolingo.adapter.LessonAdapter
 import com.example.unolingo.utils.LessonConnectionHandler
 import com.example.unolingo.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 /**
  * A simple [Fragment] subclass.
@@ -30,6 +25,7 @@ class MenuFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var nameTextView: TextView
+    private lateinit var menuAdapter: LessonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +44,8 @@ class MenuFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_menu, container, false)
         recyclerView = view.findViewById(R.id.menu_recycler)
-        recyclerView.adapter = LessonAdapter()
+        menuAdapter = LessonAdapter()
+        recyclerView.adapter = menuAdapter
         recyclerView.layoutManager = LinearLayoutManager(view.context)
 
         nameTextView = view.findViewById(R.id.menu_linear_text_name)
@@ -66,9 +63,13 @@ class MenuFragment : Fragment() {
         return view
     }
 
-    val questionScoreResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK){
-        }
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewStateRestored: restored view")
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+    fun refreshAdapter(adapter: LessonAdapter){
+        adapter.notifyDataSetChanged()
     }
 
     companion object {
@@ -81,5 +82,8 @@ class MenuFragment : Fragment() {
             }
 
         private const val TAG = "MenuFragment"
+        const val SCORE_RETURN = "SCORE"
+        const val LESSON_ID = "LESSON_ID"
+        const val IS_COMPLETED = "IS_COMPLETED"
     }
 }
