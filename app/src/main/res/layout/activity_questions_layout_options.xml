@@ -37,14 +37,15 @@
         </LinearLayout>
         <ImageView
             android:id="@+id/question_image"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/question_play_sound"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_margin="10dp"
             android:contentDescription="Question image"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:maxHeight="400dp"/>
 
         <TextView
             android:id="@+id/question_question"

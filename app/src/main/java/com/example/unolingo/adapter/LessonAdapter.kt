@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.model.Lesson
+import com.example.unolingo.model.LessonProgress
 import com.example.unolingo.utils.Animations
 import com.example.unolingo.utils.LessonConnectionHandler
 
 class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
     var list = LessonConnectionHandler.lessonList
+    var progressList = LessonConnectionHandler.progressList
 
     init{
         LessonConnectionHandler.retrieveLessons(this)
@@ -28,7 +30,7 @@ class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(list[position], progressList)
     }
 
     override fun getItemCount() = list.size
@@ -40,7 +42,7 @@ class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
         lateinit var collapsableRecyclerView: RecyclerView
         lateinit var cardView: CardView
         private var isExpanded = false
-        fun bind(lesson: Lesson){
+        fun bind(lesson: Lesson, progress: ArrayList<LessonProgress>){
             text = itemView.findViewById(R.id.lesson_item_name)
             expandIcon = itemView.findViewById(R.id.lesson_item_expand)
             collapsableRecyclerView = itemView.findViewById(R.id.lesson_item_inner_layout)
@@ -48,7 +50,7 @@ class LessonAdapter: RecyclerView.Adapter<LessonAdapter.ViewHolder>() {
 
             text.text = lesson.name
 
-            collapsableRecyclerView.adapter = InnerLessonAdapter(lesson)
+            collapsableRecyclerView.adapter = InnerLessonAdapter(lesson, progress)
             collapsableRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
             cardView.setOnClickListener {
                 if (isExpanded){

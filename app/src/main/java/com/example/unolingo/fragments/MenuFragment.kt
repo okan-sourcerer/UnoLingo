@@ -1,5 +1,6 @@
 package com.example.unolingo.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,10 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.unolingo.R
 import com.example.unolingo.adapter.LessonAdapter
+import com.example.unolingo.utils.LessonConnectionHandler
 import com.example.unolingo.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -29,6 +33,10 @@ class MenuFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if(activity?.intent?.getBooleanExtra("NEW_REGISTRATION", false) == true){
+            LessonConnectionHandler.insertInitialLessonProgress()
+        }
         arguments?.let {
         }
     }
@@ -39,7 +47,6 @@ class MenuFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_menu, container, false)
-
         recyclerView = view.findViewById(R.id.menu_recycler)
         recyclerView.adapter = LessonAdapter()
         recyclerView.layoutManager = LinearLayoutManager(view.context)
@@ -57,6 +64,11 @@ class MenuFragment : Fragment() {
         }
 
         return view
+    }
+
+    val questionScoreResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK){
+        }
     }
 
     companion object {

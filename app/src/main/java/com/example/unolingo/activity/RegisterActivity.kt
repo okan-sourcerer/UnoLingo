@@ -62,6 +62,7 @@ class RegisterActivity : AppCompatActivity() {
                         }
                     }
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("NEW_REGISTRATION", true)
                     startActivity(intent)
                     Toast.makeText(this, "Registration is successful!", Toast.LENGTH_SHORT).show()
                 }

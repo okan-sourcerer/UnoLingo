@@ -2,16 +2,18 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+
+    id 'kotlin-kapt'
 }
 
 android {
     namespace 'com.example.unolingo'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.unolingo"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -51,5 +53,6 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
 }

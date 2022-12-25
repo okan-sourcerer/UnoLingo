@@ -1,20 +1,16 @@
 package com.example.unolingo.activity
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
+import android.graphics.Color
+import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.unolingo.R
 import com.example.unolingo.adapter.QuestionSortAdapter
 import com.example.unolingo.model.Question
@@ -48,6 +44,11 @@ class QuestionsActivity : AppCompatActivity() {
 
     private lateinit var spinner: ProgressBar
 
+    private var wrongAnswers = 0
+    private var answerReached = false
+
+    private lateinit var mediaPlayer: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_loading)
@@ -62,6 +63,7 @@ class QuestionsActivity : AppCompatActivity() {
                         val question = item.toObject(Question::class.java)
                         Log.d(TAG, "onCreate: adding questions ${question?.questionNum}" )
                         if (question != null) {
+                            Log.d(TAG, "onCreate: questionAdded $question")
                             questionList.add(question)
                         }
                     }
@@ -83,6 +85,7 @@ class QuestionsActivity : AppCompatActivity() {
             finish()
             return
         }
+        answerReached = false
         this.questionIndex = questionIndex
         val question = questionList[questionIndex]
 
@@ -125,11 +128,8 @@ class QuestionsActivity : AppCompatActivity() {
 
         if (type == 4){
             questionImage.visibility = View.VISIBLE
-            Glide
-                .with(this)
-                .load(File(question.filePaths[0]))
-                .into(questionImage)
-
+            Log.d(TAG, "forBlankQuestions: path is ${question.filePaths.toString()} visible: ${questionImage.visibility}")
+            questionImage.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
         }
         nextQuestionLayout = findViewById(R.id.question_next_layout)
         nextQuestionButton = findViewById(R.id.question_next)
@@ -170,10 +170,7 @@ class QuestionsActivity : AppCompatActivity() {
             questionImage = findViewById(R.id.question_image)
             questionImage.visibility = View.VISIBLE
             nextQuestionLayout.visibility = View.VISIBLE
-            Glide
-                .with(this)
-                .load(File(question.filePaths[0]))
-                .into(questionImage)
+            questionImage.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
 
 //            questionImage.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
         } else{
@@ -183,6 +180,19 @@ class QuestionsActivity : AppCompatActivity() {
 
                 playSound.setOnClickListener {
                     question.typeSpecificQuestion // url
+                    val mediaUri = Uri.fromFile(File(question.filePaths[0]))
+                    mediaPlayer = MediaPlayer().apply {
+                        setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .build()
+                        )
+                        setDataSource(applicationContext, mediaUri)
+                        prepare()
+                        start()
+                    }
+
 //                    TODO("Load audio from firebase storage and start/stop when clicked")
                 }
             }
@@ -190,10 +200,7 @@ class QuestionsActivity : AppCompatActivity() {
                 Log.d(TAG, "forOptionQuestions: this question has image ${question.question}")
                 questionImage = findViewById(R.id.question_image)
                 questionImage.visibility = View.VISIBLE
-                Glide
-                    .with(this)
-                    .load(File(question.filePaths[0]))
-                    .into(questionImage)
+                questionImage.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
 //                questionImage.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
             }
 
@@ -208,50 +215,52 @@ class QuestionsActivity : AppCompatActivity() {
             option4.text = question.option4
 
             option1.setOnClickListener {
-                if (checkOptionAnswer(question, "option1")){
+                if (checkOptionAnswer(question, "option1", it as Button)){
                     nextQuestionLayout.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
                 else{
-//                    TODO("wrong answer + 1")
+                    wrongAnswer(it)
                 }
-                it.isEnabled = false
             }
             option2.setOnClickListener {
-                if(checkOptionAnswer(question, "option2")){
+                if(checkOptionAnswer(question, "option2", it as Button)){
                     nextQuestionLayout.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
                 else{
-//                    TODO("wrong answer + 1")
+                    wrongAnswer(it)
                 }
-                it.isEnabled = false
             }
             option3.setOnClickListener {
-                if(checkOptionAnswer(question, "option3")){
+                if(checkOptionAnswer(question, "option3", it as Button)){
                     nextQuestionLayout.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
                 else{
-//                    TODO("wrong answer + 1")
+                    wrongAnswer(it)
                 }
-                it.isEnabled = false
             }
             option4.setOnClickListener {
-                if(checkOptionAnswer(question, "option4")){
+                if(checkOptionAnswer(question, "option4", it as Button)){
                     nextQuestionLayout.visibility = View.VISIBLE
                     return@setOnClickListener
                 }
                 else{
-//                    TODO("wrong answer + 1")
+                    wrongAnswer(it)
                 }
-                it.isEnabled = false
             }
         }
     }
 
-    private fun checkOptionAnswer(question: Question, option: String): Boolean{
-        return question.answer == option
+    private fun checkOptionAnswer(question: Question, option: String, button: View): Boolean{
+        val result = question.answer == option
+        if (result){
+            answerReached = true
+
+            button.setBackgroundColor(Color.GREEN)
+        }
+        return result
     }
 
     private fun forQuestionsWithImageAnswers(question: Question, index: Int){
@@ -265,64 +274,50 @@ class QuestionsActivity : AppCompatActivity() {
         val imageOption4: ImageButton = findViewById(R.id.question_option4)
         questionText.text = question.question
 
-        Glide
-            .with(this)
-            .load(File(question.filePaths[0]))
-            .into(imageOption1)
-        Glide
-            .with(this)
-            .load(File(question.filePaths[1]))
-            .into(imageOption2)
-        Glide
-            .with(this)
-            .load(File(question.filePaths[2]))
-            .into(imageOption3)
-        Glide
-            .with(this)
-            .load(File(question.filePaths[3]))
-            .into(imageOption4)
+        imageOption1.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
+        imageOption2.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[1]))
+        imageOption3.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[2]))
+        imageOption4.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[3]))
+
 //        imageOption1.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[0]))
 //        imageOption2.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[1]))
 //        imageOption3.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[2]))
 //        imageOption4.setImageBitmap(Utils.loadImageFromInternal(question.filePaths[3]))
 
         imageOption1.setOnClickListener {
-            if (checkOptionAnswer(question, "option1")){
+            if (checkOptionAnswer(question, "option1", it)){
                 nextQuestionLayout.visibility = View.VISIBLE
                 return@setOnClickListener
             }
             else{
-//                    TODO("wrong answer + 1")
+                wrongAnswer(it)
             }
-            it.isEnabled = false
         }
         imageOption2.setOnClickListener {
-            if(checkOptionAnswer(question, "option2")){
+            if(checkOptionAnswer(question, "option2", it)){
                 nextQuestionLayout.visibility = View.VISIBLE
                 return@setOnClickListener
             }
             else{
-//                    TODO("wrong answer + 1")
+                wrongAnswer(it)
             }
-            it.isEnabled = false
         }
         imageOption3.setOnClickListener {
-            if(checkOptionAnswer(question, "option3")){
+            if(checkOptionAnswer(question, "option3", it)){
                 nextQuestionLayout.visibility = View.VISIBLE
                 return@setOnClickListener
             }
             else{
-//                    TODO("wrong answer + 1")
+                wrongAnswer(it)
             }
-            it.isEnabled = false
         }
         imageOption4.setOnClickListener {
-            if(checkOptionAnswer(question, "option4")){
+            if(checkOptionAnswer(question, "option4", it)){
                 nextQuestionLayout.visibility = View.VISIBLE
                 return@setOnClickListener
             }
             else{
-//                    TODO("wrong answer + 1")
+                wrongAnswers++
             }
             it.isEnabled = false
         }
@@ -356,17 +351,25 @@ class QuestionsActivity : AppCompatActivity() {
         }
     }
 
+    private fun wrongAnswer(view: View){
+        if (!answerReached){
+            wrongAnswers++
+            view.isEnabled = false
+            Toast.makeText(this, "Wrong answer", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun nextAnswer(index: Int){
         setContentView(R.layout.activity_question_loading)
         val question = questionList[index]
         if (question.typeSpecificQuestion.isNotEmpty()){
             val type = question.type
-            if (type == 3 || type == 6 || type == 7 || type == 8){
-                for (fPath in question.filePaths){
-                    val file = File(fPath)
-                    file.delete()
-                }
-            }
+//            if (type == 3 || type == 6 || type == 7 || type == 8){
+//                for (fPath in question.filePaths){
+//                    val file = File(fPath)
+//                    file.delete()
+//                }
+//            }
         }
 
         handleUI(index + 1)

@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.util.Log
 import com.example.unolingo.model.ForumSummaryEntity
+import com.example.unolingo.model.LessonProgress
 import com.example.unolingo.model.Question
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -28,7 +30,7 @@ object Utils {
             if (question.type == 3){ // sesli soru. ses kaydet
                 question.filePaths = arrayListOf(storeAudio(storage, question.typeSpecificQuestion, context))
             }
-            else if(question.type == 6 || question.type == 8){ // tek resim alınacak
+            else if(question.type == 6 || question.type == 8 || question.type == 4){ // tek resim alınacak
                 question.filePaths = arrayListOf(storeImage(storage, question.typeSpecificQuestion, context))
             }
             else if(question.type == 7){
