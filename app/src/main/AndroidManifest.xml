@@ -16,6 +16,13 @@
         android:theme="@style/Theme.UnoLingo"
         tools:targetApi="31">
         <activity
+            android:name=".activity.ResultActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activity.QuestionsActivity"
             android:exported="false"
             android:usesCleartextTraffic="true">
@@ -33,7 +40,6 @@
         <activity
             android:name=".activity.LoginActivity"
             android:exported="true">
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

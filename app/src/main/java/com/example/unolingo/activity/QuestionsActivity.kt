@@ -100,6 +100,9 @@ class QuestionsActivity : AppCompatActivity() {
             R.id.menu_call_instructor -> {
                 Toast.makeText(this, "This feature is not yet implemented.", Toast.LENGTH_SHORT).show()
             }
+            android.R.id.home -> {
+                finish()
+            }
         }
         return true
     }
@@ -123,6 +126,9 @@ class QuestionsActivity : AppCompatActivity() {
             Log.d(TAG, "handleUI: progressIndex $progressIndex")
             Log.d(TAG, "handleUI: lessonID $lessonID, score $score, iscompleted ${score > 60}")
             val intent = Intent()
+            intent.putExtra(MenuFragment.LESSON_ID, lessonID)
+            intent.putExtra(MenuFragment.SCORE_RETURN, score)
+            intent.putExtra(MenuFragment.IS_COMPLETED, score > 60)
             setResult(Activity.RESULT_OK, intent)
             finish()
             return
@@ -162,6 +168,7 @@ class QuestionsActivity : AppCompatActivity() {
 
     private fun forBlankQuestions(question: Question, type: Int, index: Int){
         setContentView(R.layout.activity_question_fill_blanks)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         questionText = findViewById(R.id.question_blank_question)
         questionText2 = findViewById(R.id.question_blank_question2)
         submit = findViewById(R.id.question_blanks_submit)
@@ -196,6 +203,7 @@ class QuestionsActivity : AppCompatActivity() {
 
     private fun forOptionQuestions(question: Question, type: Int, index: Int){
         setContentView(R.layout.activity_questions_layout_options)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         questionText = findViewById(R.id.question_question)
 //        questionText2 = findViewById(R.id.question_blank_question2)
 
@@ -307,6 +315,7 @@ class QuestionsActivity : AppCompatActivity() {
 
     private fun forQuestionsWithImageAnswers(question: Question, index: Int){
         setContentView(R.layout.activity_question_image_answers)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         questionText = findViewById(R.id.question_question)
         nextQuestionLayout = findViewById(R.id.question_next_layout)
         nextQuestionButton = findViewById(R.id.question_next)
@@ -371,6 +380,7 @@ class QuestionsActivity : AppCompatActivity() {
 
     private fun forSortQuestions(question: Question, index: Int){
         setContentView(R.layout.activity_question_sort_question)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         questionText = findViewById(R.id.question_sort_question_text)
 
         nextQuestionLayout = findViewById(R.id.question_next_layout)

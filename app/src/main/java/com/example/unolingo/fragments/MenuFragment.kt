@@ -77,5 +77,8 @@ class MenuFragment : Fragment() {
             }
 
         private const val TAG = "MenuFragment"
+        const val SCORE_RETURN = "SCORE"
+        const val LESSON_ID = "LESSON_ID"
+        const val IS_COMPLETED = "IS_COMPLETED"
     }
 }

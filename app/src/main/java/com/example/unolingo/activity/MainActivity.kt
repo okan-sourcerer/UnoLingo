@@ -70,5 +70,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     val questionScoreResult =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK){
+            val intent = it.data
+            val lesson = intent?.getStringExtra(MenuFragment.LESSON_ID)
+            val score = intent?.getIntExtra(MenuFragment.SCORE_RETURN, 0)
+            val isCompleted = intent?.getBooleanArrayExtra(MenuFragment.IS_COMPLETED)
+
+            if (lesson != null || score != null || isCompleted != null){
+                Log.d(TAG, "on activity result. Launching result activity: $lesson, $score, $isCompleted")
+                val transferIntent = Intent(this, ResultActivity::class.java)
+                transferIntent.putExtra(MenuFragment.LESSON_ID, lesson)
+                transferIntent.putExtra(MenuFragment.SCORE_RETURN, score)
+                transferIntent.putExtra(MenuFragment.IS_COMPLETED, isCompleted)
+                startActivity(transferIntent)
+            }
+        }
     }
 }
