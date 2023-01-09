@@ -30,15 +30,15 @@ object LessonConnectionHandler {
                     lessonList.add(lesson)
                 }
 
-                db.collection("userProgress").addSnapshotListener { value, error ->
-                    if (error != null){
-                        Log.d(TAG, "retrieveLessons: error retrieving lessons $error")
+                db.collection("userProgress").whereEqualTo("uid", Firebase.auth.uid.toString()).addSnapshotListener { progressValue, progressError ->
+                    if (progressError != null){
+                        Log.d(TAG, "retrieveLessons: error retrieving lessons $progressError")
                     }
                     else{
-                        if (value != null) {
-                            Log.d(TAG, "firestore getting lessons: got " + value.size() + " items")
+                        if (progressValue != null) {
+                            Log.d(TAG, "firestore getting lessons: got " + progressValue.size() + " items")
                             progressList.removeAll { true }
-                            for (document in value.iterator()){
+                            for (document in progressValue.iterator()){
                                 val progress = document.toObject<LessonProgress>()
                                 progressList.add(progress)
                             }
